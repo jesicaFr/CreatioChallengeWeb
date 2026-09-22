@@ -1,0 +1,129 @@
+<main class="shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Creatio Accounts">
+      <span class="brand-mark" aria-hidden="true">C</span>
+      <span>Creatio <strong>Accounts</strong></span>
+    </a>
+    <span class="connection"><span class="status-dot"></span> API conectada</span>
+  </header>
+
+  <section class="intro">
+    <p class="eyebrow">CRM / DIRECTORIO</p>
+    <h1>Cuentas</h1>
+    <p class="subtitle">Explorá las cuentas sincronizadas desde Creatio.</p>
+  </section>
+
+  <section class="toolbar" aria-label="Filtros de cuentas">
+    <label class="search-field">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <span class="sr-only">Buscar por nombre</span>
+      <input [ngModel]="search()" (ngModelChange)="onSearchChange($event)" type="search" placeholder="Buscar por nombre..." autocomplete="off" />
+      @if (search()) {
+        <button class="clear-button" type="button" (click)="clearSearch()" aria-label="Limpiar búsqueda">×</button>
+      }
+    </label>
+
+    <div class="toolbar-actions">
+      <div class="result-count"><strong>{{ total() }}</strong> {{ total() === 1 ? 'cuenta' : 'cuentas' }}</div>
+      <button class="new-account-button" type="button" (click)="openCreateDialog()">+ Nueva cuenta</button>
+    </div>
+  </section>
+
+  @if (successMessage()) {
+    <section class="toast" role="status">
+      {{ successMessage() }}
+    </section>
+  }
+
+  @if (error()) {
+    <section class="alert" role="alert">
+      <span class="alert-icon" aria-hidden="true">!</span>
+      <div><strong>No pudimos cargar las cuentas</strong><p>{{ error() }}</p></div>
+      <button class="retry-button" type="button" (click)="retry()">Reintentar</button>
+    </section>
+  }
+
+  @if (isCreateDialogOpen()) {
+    <div class="dialog-backdrop" (click)="closeCreateDialog()">
+      <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="create-account-title" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+          <div>
+            <p class="dialog-eyebrow">Alta de cuenta</p>
+            <h2 id="create-account-title">Crear nueva cuenta</h2>
+          </div>
+          <button class="icon-close" type="button" aria-label="Cerrar" (click)="closeCreateDialog()">×</button>
+        </div>
+
+        <form class="account-form" (ngSubmit)="submitAccount()">
+          <label>
+            <span>Nombre</span>
+            <input type="text" [(ngModel)]="form().name" name="name" placeholder="Ej: Empresa Cliente S.A." />
+          </label>
+
+          <label>
+            <span>Código</span>
+            <input type="text" [(ngModel)]="form().code" name="code" placeholder="Ej: CLI-2026-001" />
+          </label>
+
+          <label>
+            <span>Teléfono</span>
+            <input type="text" [(ngModel)]="form().phone" name="phone" placeholder="Ej: +54 11 1234-5678" />
+          </label>
+
+          <label>
+            <span>Web</span>
+            <input type="url" [(ngModel)]="form().web" name="web" placeholder="https://www.empresacliente.com" />
+          </label>
+
+          <label>
+            <span>TypeId</span>
+            <input type="text" [(ngModel)]="form().typeId" name="typeId" placeholder="57412fad-53e6-df11-971b-001d60e938c6" />
+          </label>
+
+          @if (formError()) {
+            <p class="form-error">{{ formError() }}</p>
+          }
+
+          <div class="dialog-actions">
+            <button type="button" class="ghost-button" (click)="closeCreateDialog()">Cancelar</button>
+            <button type="submit" class="submit-button">Crear cuenta</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <section class="table-card" aria-live="polite">
+    @if (loading()) {
+      <div class="loading-state"><span class="spinner"></span> Cargando cuentas...</div>
+    } @else if (!error() && accounts().length === 0) {
+      <div class="empty-state"><span class="empty-icon" aria-hidden="true">⌁</span><strong>No hay cuentas para mostrar</strong><span>Creá una nueva cuenta desde el botón de arriba.</span></div>
+    } @else if (!error()) {
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cuenta</th><th>País</th><th>Tipo de cuenta</th><th>Identificador</th></tr></thead>
+          <tbody>
+            @for (account of accounts(); track account.id) {
+              <tr>
+                <td><div class="account-name"><span class="avatar">{{ account.name.charAt(0).toUpperCase() }}</span><strong>{{ account.name }}</strong></div></td>
+                <td>{{ account.countryName || 'Sin país' }}</td>
+                <td><span class="type-badge">{{ account.accountTypeName || 'Sin tipo' }}</span></td>
+                <td class="identifier">{{ account.id }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <footer class="pagination">
+        <span>Mostrando {{ firstItem() }}–{{ lastItem() }} de {{ total() }}</span>
+        <div class="page-controls">
+          <button type="button" (click)="goToPage(page() - 1)" [disabled]="page() === 1" aria-label="Página anterior">←</button>
+          <span>Página <strong>{{ page() }}</strong> de {{ totalPages() }}</span>
+          <button type="button" (click)="goToPage(page() + 1)" [disabled]="page() >= totalPages()" aria-label="Página siguiente">→</button>
+        </div>
+      </footer>
+    }
+  </section>
+
+  <p class="data-note"><span aria-hidden="true">↗</span> Datos consultados en tiempo real desde Creatio OData</p>
+</main>

@@ -1,5 +1,21 @@
 # CreatioIntegrationWeb
 
+Frontend Angular para consultar cuentas de Creatio a través de la API .NET del proyecto `CreatioChallengeBack`.
+
+## Ejecutar localmente
+
+1. Iniciá el backend con el perfil HTTP en `http://localhost:5204`.
+2. Desde esta carpeta ejecutá:
+
+```bash
+npm install
+npm start
+```
+
+Abrí `http://localhost:4200`. El proxy de desarrollo reenvía `/api` al backend, por lo que no se exponen credenciales ni tokens en el navegador.
+
+La pantalla consulta `GET /api/Accounts` con `search`, `page` y `pageSize`. La búsqueda tiene debounce y la paginación se resuelve en el backend; únicamente se muestran los campos de la lista, incluyendo los lookups `CountryName` y `AccountTypeName` ya resueltos por Creatio.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.8.
 
 ## Development server
