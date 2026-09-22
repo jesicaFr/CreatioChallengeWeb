@@ -5,71 +5,99 @@ Frontend Angular para consultar cuentas de Creatio a través de la API .NET del 
 ## Ejecutar localmente
 
 1. Iniciá el backend con el perfil HTTP en `http://localhost:5204`.
-2. Desde esta carpeta ejecutá:
+# Creatio Accounts Web
 
-```bash
+Aplicación Angular para consultar y crear cuentas de Creatio mediante la API .NET del proyecto `CreatioChallengeBack`.
+
+## Instrucciones para levantar el proyecto
+
+### Requisitos
+
+- Node.js y npm.
+- .NET SDK compatible con el backend.
+- El repositorio backend `CreatioChallengeBack` descargado en la máquina.
+- Configuración OAuth válida de Creatio para probar contra el tenant real.
+
+### 1. Levantar la API
+
+Desde la carpeta del backend ejecutá:
+
+```powershell
+dotnet run --project .\CreatioChallengeBack.csproj --urls "http://localhost:5204"
+```
+
+La API queda disponible en `http://localhost:5204`.
+
+Antes de iniciar la API, verificá que la configuración de Creatio tenga la URL base, el cliente OAuth, el secreto y los datos necesarios para obtener el token.
+
+### 2. Instalar dependencias del frontend
+
+Desde la raíz de este repositorio ejecutá:
+
+```powershell
 npm install
+```
+
+### 3. Levantar Angular
+
+```powershell
 npm start
 ```
 
-Abrí `http://localhost:4200`. El proxy de desarrollo reenvía `/api` al backend, por lo que no se exponen credenciales ni tokens en el navegador.
+Abrí `http://localhost:4200` en el navegador.
 
-La pantalla consulta `GET /api/Accounts` con `search`, `page` y `pageSize`. La búsqueda tiene debounce y la paginación se resuelve en el backend; únicamente se muestran los campos de la lista, incluyendo los lookups `CountryName` y `AccountTypeName` ya resueltos por Creatio.
+El archivo `proxy.conf.json` redirige las llamadas `/api` hacia `http://localhost:5204`, por lo que el navegador no recibe credenciales ni tokens de Creatio.
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.0.8.
+## Funcionalidades
 
-## Development server
+- Listado de cuentas desde `GET /api/Accounts`.
+- Búsqueda por nombre.
+- Paginación server-side con `page` y `pageSize`.
+- Alta desde un diálogo separado.
+- Validación de nombre y código duplicados en la interfaz.
+- Refresco automático del listado luego de crear una cuenta.
 
-To start a local development server, run:
+El alta envía este contrato a `POST /api/Accounts`:
 
-```bash
-ng serve
+```json
+{
+	"Name": "Empresa Cliente S.A.",
+	"Code": "CLI-2026-001",
+	"Phone": "+54 11 1234-5678",
+	"Web": "https://www.empresacliente.com",
+	"TypeId": "57412fad-53e6-df11-971b-001d60e938c6"
+}
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Estructura principal
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```text
+src/app/creatio-accounts/
+├── dto/
+│   └── account.dto.ts
+├── services/
+│   └── creatio-accounts.service.ts
+├── creatio-accounts.ts
+├── creatio-accounts.html
+└── creatio-accounts.css
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- `dto/`: contratos de datos usados por la feature.
+- `services/`: comunicación HTTP con la API.
+- `creatio-accounts.ts`: estado, validaciones y acciones de la pantalla.
 
-```bash
-ng generate --help
+## Verificaciones
+
+Compilar el frontend:
+
+```powershell
+npm run build
 ```
 
-## Building
+Ejecutar las pruebas:
 
-To build the project run:
-
-```bash
-ng build
+```powershell
+npm test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Documentación de OAuth y Creatio: [docs/creatio-oauth-client-credentials.md](docs/creatio-oauth-client-credentials.md).
