@@ -1,6 +1,17 @@
-## Creatio Accounts
+# Creatio Accounts
 
-Aplicación para consultar y administrar cuentas de Creatio.
+Aplicación web desarrollada con **Angular** para consultar y administrar cuentas de **Creatio** a través de una API REST.
+
+## Funcionalidades
+
+La aplicación permite:
+
+* 📋 Consultar el listado de cuentas de Creatio.
+* 📄 Navegar el listado mediante paginación.
+* ➕ Crear nuevas cuentas.
+* ✅ Validar los datos obligatorios del formulario.
+* 🔄 Actualizar automáticamente el listado después de crear una cuenta.
+* ⚠️ Informar errores provenientes de la API y validaciones del formulario.
 
 ## Instalación
 
@@ -18,29 +29,65 @@ Ejecutá:
 npm start
 ```
 
-Luego abrí la aplicación desde el navegador.
+Luego abrí la URL indicada por Angular en el navegador.
 
 ## Uso
 
-- Revisá el listado de cuentas disponibles.
-- Usá el buscador para encontrar una cuenta por nombre.
-- Navegá entre las páginas del listado.
-- Seleccioná **Nueva cuenta** para abrir el formulario de alta.
-- Completá los datos y seleccioná **Crear cuenta**.
-- La lista se actualiza automáticamente después de crear una cuenta.
+### Listado de cuentas
 
-La aplicación avisa si faltan datos obligatorios o si ya existe una cuenta con el mismo nombre o código.
+Al ingresar a la aplicación se muestra el listado de cuentas disponibles en Creatio.
+
+El listado permite navegar entre las diferentes páginas y consultar las cuentas disponibles.
+
+### Crear una cuenta
+
+Seleccioná **Nueva cuenta** para abrir el formulario de alta.
+
+Completá los datos requeridos y seleccioná **Crear cuenta**.
+
+Una vez creada correctamente, el listado se actualiza automáticamente.
+
+La aplicación informa si:
+
+* Faltan datos obligatorios.
+* La cuenta ya existe con el mismo nombre o código.
+* Se produce un error durante la operación.
 
 ## Comandos útiles
 
-Compilar la aplicación:
+### Iniciar en desarrollo
+
+```bash
+npm start
+```
+
+### Compilar para producción
 
 ```bash
 npm run build
 ```
 
-Ejecutar las pruebas:
+## Tecnologías
 
-```bash
-npm test
+* Angular
+* TypeScript
+* HTML / CSS
+* REST API
+* Creatio OData
+
+## Arquitectura
+
+La aplicación frontend se comunica con el backend mediante una API REST. El frontend no maneja directamente las credenciales de Creatio.
+
+```text
+Angular
+   │
+   │ HTTP / REST
+   ▼
+Creatio Challenge API
+   │
+   │ OAuth 2.0 + OData
+   ▼
+Creatio
 ```
+
